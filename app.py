@@ -7,36 +7,34 @@ Original file is located at
     https://colab.research.google.com/drive/1Yc5qM-c-CKiHi7CugXkrXQXr1g-MPP6b
 """
 
-from flask import Flask, request, jsonify, render_template
-import MeCab
+from janome.tokenizer import Tokenizer
 import json
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
+tokenizer = Tokenizer()
 
-# MeCab初期化
-tagger = MeCab.Tagger("-Owakati")
-
-# スコア辞書の読み込み
 with open("ero_score_dict.json", encoding="utf-8") as f:
     score_dict = json.load(f)
 
-# スコア計算
+def tokenize(text):
+    return [token.surface for token in tokenizer.tokenize(text)]
+
 def classify_ero(text, score_dict):
-    words = tagger.parse(text).strip().split()
+    words = tokenize(text)
     return sum(score_dict.get(w, 0) for w in words)
 
-# HTMLページ表示
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
-# スコアAPI
 @app.route('/score', methods=['POST'])
 def score():
     data = request.get_json()
-    text = data.get('text', '')
+    text = data.get("text", "")
     score = classify_ero(text, score_dict)
     return jsonify({'score': score})
 
 if __name__ == '__main__':
     app.run(debug=True)
+
