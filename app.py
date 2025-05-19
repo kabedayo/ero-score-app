@@ -14,7 +14,7 @@ import json
 app = Flask(__name__)
 
 # MeCab初期化
-tagger = MeCab.Tagger("-d/var/lib/mecab/dic/debian -r/usr/bin/mecab -Owakati")
+tagger = MeCab.Tagger("-Owakati")
 
 # スコア辞書の読み込み
 with open("ero_score_dict.json", encoding="utf-8") as f:
