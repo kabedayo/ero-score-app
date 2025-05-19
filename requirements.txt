@@ -1,2 +1,2 @@
 Flask
-mecab-python3
+janome
